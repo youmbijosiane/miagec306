@@ -1,0 +1,35 @@
+		boolean empty = true;
+		for (int k = 0; k < tab.length; k++) {
+			if (tab[k] != 0) {
+				empty = false;
+			}
+		}
+		if (empty) {
+			throw new IllegalArgumentException("Le tableau"
+							+ "a trier est nul"); 
+		} else {
+			for (int j = taille; j > 0; j--) {
+				for (int i = 0; i < j; i++) {
+					if (tab[i] > tab[i + 1]) {
+						temp = tab[i];
+						tab[i] = tab[i + 1];
+						tab[i + 1] = temp;
+					}
+				}
+			}
+		}
+	}
+/**
+* Programme principal.
+**/
+	public static void main(final String[] args) {
+	// Un tableau
+		final int[] tab = {8, 7, 1, 0, 5, 2, 4, 3, 9};
+		sort(tab);
+   // affichage du tableau trié
+		System.out.println("Tri du tableau");
+		for (int i = 0; i < tab.length; i++) {
+			System.out.print(tab[i] + " / ");
+		}
+	}
+}
