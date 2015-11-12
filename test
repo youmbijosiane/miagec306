@@ -1,0 +1,75 @@
+/**
+* Algorithme de Tri.
+* Renvoie un tableau trié dans l'ordre croissant
+* @author Josiane Youmbi
+**/
+
+public final class SortTab {
+/**
+* Tri le tableau.
+* @throw IllegalArgumentException si tab est null
+* @param tab
+* retourne le tableau trié dans l'ordre croissant
+**/
+	public static void sort(final int[] tab) {
+		int temp, taille = tab.length - 1;
+		//Verification si le tableau est nul
+		boolean empty = true;
+		for (int k = 0; k < tab.length; k++) {
+			if (tab[k] != 0) {
+				empty = false;
+			}
+		}
+		if (empty) {
+			throw new IllegalArgumentException("Le tableau"
+							+ "a trier est nul"); 
+		} else {
+			for (int j = taille; j > 0; j--) {
+				for (int i = 0; i < j; i++) {
+					if (tab[i] > tab[i + 1]) {
+						temp = tab[i];
+						tab[i] = tab[i + 1];
+						tab[i + 1] = temp;
+					}
+				}
+			}
+		}
+	}
+/**
+* Programme principal.
+**/
+	public static void main(final String[] args) {
+	// Un tableau
+		final int[] tab = {8, 7, 1, 0, 5, 2, 4, 3, 9};
+		sort(tab);
+   // affichage du tableau trié
+		System.out.println("Tri du tableau");
+		for (int i = 0; i < tab.length; i++) {
+			System.out.print(tab[i] + " / ");
+		}
+	}
+/**
+* Tests Algorithme de Tri.
+**/
+	
+	public void testsort() {
+		// Le tableau a trier
+	    	int verif = 0;
+			final int[] tab = new int[] {10, 4, 10, 31, 0, 1, 5, 2, 3};
+		// Le tableau resultant a obtenir
+			final int[] tabres = new int[] {0, 1, 2, 3, 4, 5, 10, 10, 31};
+		// Tri du tableau	
+			sort(tab);
+	   // Test du résultat obtenu;
+			for (int i = 0; i < tab.length; i++) {
+				if (tab[i] == tabres[i]) {
+					verif = verif + 1; 
+				}
+			}
+			if (verif == tab.length) {
+					System.out.println("Test validé");
+			} else {
+					System.out.println("Test échoué"); 
+			}
+	}
+}
