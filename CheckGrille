@@ -1,0 +1,40 @@
+
+/* vérifie s’il n'y pas de répétition sur la ligne i*/
+for (int i = 1; i < 10; i++) {
+	for (int j = 1; j < 10; j++) {
+		if (grille[i][j] =! 0) {
+			for (int k = 1; k < 10; k++) {
+				if (grille[i][k] == grille[i][j]) { 
+					compteurligne=+;
+				}
+			}
+		}else {
+			System.out.print(" La grille est incomplete ");
+		}
+	}
+}
+if (compteurligne <= 9) {
+	System.out.print(" La grille ne comporte pas de doublons ");
+}else {
+	System.out.print(" La grille a des doublons ");
+}
+
+/* vérifie s’il n'y pas de répétition sur la colonne i*/
+for (int i = 1; i < 10; i++) {
+	for (int j = 1; j < 10; j++) {
+		if (grille[j][i] =! 0) {
+			for (int k = 1; k < 10; k++) {
+				if (grille[k][i] == grille[j][i]) { 
+					compteurcol=+;
+				}
+			}
+		}else {
+			System.out.print(" La grille est incomplete ");
+		}
+	}
+}
+if (compteurcol <= 9) {
+	System.out.print(" La grille ne comporte pas de doublons ");
+}else {
+	System.out.print(" La grille a des doublons ");
+}
