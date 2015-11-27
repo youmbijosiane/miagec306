@@ -1,0 +1,194 @@
+package solveur_de_sudoku;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
+/**
+ * 
+ * @author MAIGUIZO Maman Sani, MOUSTAPHA Omar Farah, AMEGBLETO Atsu Elom Yao, YOUMBI EKEN Bernadette Josiane  
+ *
+ */
+public class Solveur_de_sudoku {
+
+	public static final int N=9;
+    private int[][] grille;
+
+    public Solveur_de_sudoku() {
+       this.grille = new int [N][N];
+    }
+	// Methode pour lire la grille a partir d'un fichier
+	public void readGrille(String Fichier) {
+    int[][] input=new int [N][N];
+    try
+    {
+        File f = new File (Fichier);
+        FileReader fr = new FileReader (f);
+        BufferedReader br = new BufferedReader (fr);
+     
+        try
+        {
+            String line = br.readLine();
+            int i=0;
+            System.out.println ("AFFICHAGE DE LA GRILLE BRUTE FOURNIE");
+            while (line != null)
+            {
+            	/*Dans cette boucle, nous n'allons traiter que les lignes dont le nombre de caractère
+            	dépasse au moins 2; ceci pour éviter les lignes qui ne contiennent que "{" ou "}" 
+            	*/
+            	if(line.trim().length()>2){
+            		System.out.println (line);
+            		/*
+            		 * Boucle de parcours des colonnes suivant la ligne de boucle
+            		 * La fonction split() retourne un tableau d'éléments obtenus grace au séparateur du split
+            		 * Si un quelconque élément du la ligne a une longueur > 1, cela voudra dire que cet élément
+            		 * se trouve à une extrémité; et donc associé d'au moins un { ou } et éventuellement un ; qu'on
+            		 * doit enlever
+            		 */
+                    for (int j=0;j<line.trim().split(",").length;j++){
+                		String elem =line.trim().split(",")[j];
+                		if(j==0 && elem.length()>1) elem = elem.trim().substring(elem.length()-1);
+                		if(j==(line.trim().split(",").length-1) && elem.length()>1) elem = elem.trim().substring(0,1);
+                		input[i][j]=Integer.parseInt(elem);
+                		//System.out.println (i+" et "+j+" = "+input[i][j]);
+                	}
+                    i++;
+            	}
+                line = br.readLine();
+                
+            }
+            grille=input;
+            br.close();
+            fr.close();
+        }
+        catch (IOException exception)
+        {
+            System.out.println ("Erreur lors de la lecture : " + exception.getMessage());
+        }
+    }
+    catch (FileNotFoundException exception)
+    {
+        System.out.println ("Le fichier n'a pas été trouvé");
+    }
+ 
+	}
+
+	/**
+	* Vérifie si la grille donnée est valide pour le jeu du sudoku, i.e ne content pas de doublons sur les lignes.
+	* @param grille
+	**/
+    public boolean checkligne(int n, int[][] grille, int i) { // verifie si il n'y pas de repétition sur la ligne i pour le chiffre n
+        for (int j = 0; j < 9; j++) {
+            if (grille[i][j] == n) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+	/**
+	* Vérifie si la grille donnée est valide pour le jeu du sudoku, i.e ne content pas de doublons sur les colonnes.
+	* @param grille
+	**/
+    public boolean checkcol(int n, int[][] grille, int j) { // verifie si il n'a pas de doublon sur la colonne j pour le chiffre n  
+        for (int i = 0; i < 9; i++) {
+
+            if (grille[i][j] == n) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+		/**
+	* verifie s'il n'existe pas de doublon dans la zone délimitée par i et j pour le chiffre n.
+	* @param grille
+	* @param n
+	* @param i
+	* @param j
+	**/
+    public boolean checkzone(int n, int[][] grille, int i, int j) { 
+        int w = i - (i % 3), z = j - (j % 3);
+
+        for (i = w; i < w + 3; i++) {
+            for (j = z; j < z + 3; j++) {
+                if (grille[i][j] == n) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+	
+    //prend en paramètre la grille de sudoku et le résous en faisant appelle au autre methode de récurcivement
+
+    public boolean verificateurValide(int[][] grille, int position) {
+
+        if (position == 9 * 9) {        // si on est à la position 81 il renvoie vraie (on fini de remplir le sudoku)
+            return true;
+        }
+
+        int i = position / 9, j = position % 9;    // i la ligne = partie entière de la division & j la colonne = le reste de la division ( position [0 .....81]
+
+        if (grille[i][j] != 0) {             // si il existe déjà un nombre à cette position on passe à la position suivante
+            return verificateurValide(grille, position + 1);
+        }
+
+        for (int k = 1; k <= 9; k++) {
+
+	// le nombre choisi (k) n'exite pas sur la colonne ni sur la ligne ni dans la zone ont peut l'inserer à la position i j
+            if (checkligne(k, grille, i) && checkcol(k, grille, j) && checkzone(k, grille, i, j)) {
+
+                grille[i][j] = k;
+
+                if (verificateurValide(grille, position + 1)) {
+                    return true;
+                }
+            }
+
+        }
+	// Tous les chiffres ont été testés, aucun n'est bon, on réinitialise la case et on retourne false
+        grille[i][j] = 0;
+        return false;
+    }
+
+    
+    public void affiche( int [][] grille) {
+        int k = 0;
+
+        for (int i = 0; i < 9; i++) {
+            int n = 0;
+            if (k % 3 == 0) {
+                System.err.print("\n");
+            }
+            k++;
+            for (int j = 0; j < 9; j++) {
+                n++;
+                System.err.print(" " + grille[i][j]);
+                if (n % 3 == 0) {
+                    System.err.print(" ");
+                }
+                if (n == 9) {
+                    System.err.println("");
+                }
+            }
+        }
+        System.err.print("--------------------");
+    }
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        
+        Solveur_de_sudoku solveur_de_sudoku = new Solveur_de_sudoku();
+        solveur_de_sudoku.readGrille("C:/Users/Public/workspace/solveur_de_sudoku/src/solveur_de_sudoku/fichier_sudoku.txt");
+        solveur_de_sudoku.affiche(solveur_de_sudoku.grille);
+        solveur_de_sudoku.verificateurValide(solveur_de_sudoku.grille, 0);
+        solveur_de_sudoku.affiche(solveur_de_sudoku.grille);
+    }
+
+}
