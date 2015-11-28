@@ -2,8 +2,11 @@ package sudoku;
 
 public final class CheckGrille {
 
+/**
+* Vérifie si la grille donnée est valide pour le jeu du sudoku, i.e ne content pas de doublons sur les lignes.
+* @param grille
+**/
 	public static void checkligne(final int [][] grille){
-/* vérifie s’il n'y pas de répétition sur la ligne i*/
 		boolean doublon = false;
 		int j;
 		for (int i = 0; i < grille.length; i++) {
@@ -26,8 +29,11 @@ public final class CheckGrille {
 		}
 	}
 
+/**
+* Vérifie si la grille donnée est valide pour le jeu du sudoku, i.e ne content pas de doublons sur les colonnes.
+* @param grille
+**/
 	public static void checkcol(final int[][] grille){
-/* vérifie s’il n'y pas de répétition sur la colonne i*/
 		boolean doublon = false;
 		int j;
 		for (int i = 0; i < grille.length; i++) {
@@ -51,7 +57,7 @@ public final class CheckGrille {
 	}
 
 /**
-* Programme principal.
+* Programme de vérification des méthodes de vérification.
 **/
 	public static void main(final String[] args) {
 	// Une grille incomplète
