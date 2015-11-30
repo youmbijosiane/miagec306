@@ -1,7 +1,7 @@
-# Activité : N° 3
-Module : Ingénierie du logiciel 
-Code module : C306
-Master M1 Miage 
+#Activité : N° 3
+#Module : Ingénierie du logiciel 
+#Code module : C306
+#Master M1 Miage 
  
 
 We are working on a Sudoku solver in java programming.
