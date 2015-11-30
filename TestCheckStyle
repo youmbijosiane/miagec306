@@ -1,0 +1,348 @@
+package solveurdesudoku.cstyle;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
+/*
+ * 
+ * @author MAIGUIZO Sani,MOUSTAPHA Omar Farah,AMEGBLETO Atsu Elom,YOUMBI EKEN BernadetteJosiane
+ *
+ */
+public class Solversudokucheckstyle {
+  int nombre = 9;
+  String chemin;
+  private int[][] grille;
+
+  public Solversudokucheckstyle() {
+    this.grille = new int[nombre][nombre];
+  }
+  
+
+  /**
+  * Fonction qui permet la lecture de la grille donnée en paramètre.
+  * @param fichier Methode pour lire la grille a partir d'un fichier
+  */
+  public void readGrille(String fichier) {
+    int[][] input = new int[nombre][nombre];;
+    try {
+      File ff = new File(fichier);
+      FileReader fr = new FileReader(ff);
+      BufferedReader br = new BufferedReader(fr);
+    
+      try {
+        System.out.println();
+        System.out.println("AFFICHAGE DE LA GRILLE BRUTE FOURNIE");
+        System.out.println();
+        String line = br.readLine();
+        int iline = 0;
+        while (line != null) {
+          /*Dans cette boucle, nous n'allons traiter que les lignes dont le nombre de caractère
+           *dépasse au moins 2; ceci pour éviter les lignes qui ne contiennent que "{" ou "}" 
+           **/
+          if (line.trim().length() > 2) {
+            System.out.println(line);
+            for (int j = 0; j < line.trim().split(",").length;j++) {
+              String elem = line.trim().split(",")[j];
+              if (j == 0 && elem.length() > 1) { 
+                elem = elem.trim().substring(elem.length() - 1);
+              }
+              if (j == (line.trim().split(",").length - 1) && elem.length() > 1) {
+                elem = elem.trim().substring(0,1);
+              }
+              input[iline][j] = Integer.parseInt(elem);
+              //System.out.println (iline +" et "+j+" = "+input[iline][j]);
+            }
+            iline++;
+          }
+          line = br.readLine();
+        }
+        grille = input;
+        br.close();
+        fr.close();
+        System.out.println();
+        System.out.println("ATTENTE D'AFFICHAGE DU RESULTAT DE LA GRILLE BRUTE FOURNIE . . .");
+        System.out.println();
+      } catch (IOException exception) {
+        System.out.println("Erreur lors de la lecture : " + exception.getMessage());
+      }
+    } catch (FileNotFoundException exception) {
+      System.out.println("Le fichier n'a pas été trouvé");
+      //System.out.println ("CHARGEMENT D'UNE GRILLE VIDE REMPLIE DE 0");
+      System.out.println();
+      affiche(grille, "CHARGEMENT D'UNE GRILLE VIDE REMPLIE DE 0");
+      verificateurValide(grille, 0);
+      System.out.println();
+      //System.out.println ("VOICI UNE POSSIBILITE D'AFFICHAGE DU SOLVEUR DE SUDOKU");
+      affiche(grille, "VOICI UNE POSSIBILITE D'AFFICHAGE DU SOLVEUR DE SUDOKU");
+    }
+  }
+  
+  /**
+  * Vérifie si la grille donnée est valide pour le jeu du sudoku, i.e 
+  * ne content pas de doublons sur les lignes.
+  * verifie si il n'y pas de repétition sur la ligne i pour le chiffre n
+  * @param grille
+  **/
+  public void checkligne(int nrechercher, int[][] grille, int iline) {
+    int doublon = 0;
+    int col = 0;
+    for (int j = 0; j < 9; j++) {
+      if (grille[iline][j] == nrechercher) {
+        //return false;
+        doublon++;
+        col = j;
+      }
+    }
+    //return true;
+    if (doublon > 1) {
+      System.out.print("Doublon retrouvé sur la ligne " + (iline + 1));
+      System.out.print("Colonne " + (col + 1) + " : ");
+      System.out.println("Nombre " + nrechercher + " chargé " + doublon + " fois");
+    }
+  }
+  
+  
+  /**
+  * Vérifie si la grille donnée est valide pour le jeu du sudoku, i.e 
+  * ne content pas de doublons sur les colonnes.
+  * verifie si il n'a pas de doublon sur la colonne j pour le chiffre n  
+  * @param grille
+  **/
+  public void checkcol(int nrechercher, int[][] grille, int jcol) {
+    int doublonCol = 0;
+    int li = 0;
+    for (int i = 0; i < 9; i++) {
+      if (grille[i][jcol] == nrechercher) {
+        doublonCol++;
+        li = i;
+      }
+    }
+    //return true;
+    if (doublonCol > 1) {
+      System.out.print("Valeur dupliquée sur la Colonne " + (jcol + 1));
+      System.out.print("à la ligne " + (li + 1) + " : ");
+      System.out.println("Le nombre " + nrechercher + " retrouvé " + doublonCol + " fois");
+    }
+  }
+
+  /**
+  * verifie s'il n'existe pas de doublon dans la zone délimitée par i et j pour le chiffre n.
+  * @param grille la tableau
+  * @param nrechercher le chiffre recherché
+  * @param iline une ligne
+  * @param jcol une colonne
+  **/
+  public void checkzone(int nrechercher,int[][] grille,int iline,int jcol) {
+    int wline = iline - (iline % 3);
+    int zcol = jcol - (jcol % 3);
+    int doublonZone = 0;
+    for (iline = wline; iline < wline + 3; iline++) {
+      for (jcol = zcol; jcol < zcol + 3; jcol++) {
+        if (grille[iline][jcol] == nrechercher) {
+          doublonZone++;
+        }
+      }
+    }
+    if (doublonZone > 1) {
+      System.out.print("Données de Zone dupliquées -> Colonne " + (zcol + 1));
+      System.out.print("-> ligne " + (wline + 1) + " : Le nombre ");
+      System.out.println(nrechercher + " retrouvé " + doublonZone + " fois dans la zone");
+    }
+  }
+
+  /**
+  * verifie si la grille est valide en parcourant lignes, colonnes et zones.
+  * @param grille
+  **/
+  public void grilleValide(int[][] grille, int position) {
+    int iline;
+    int jcol;
+    System.err.println("");
+    System.err.println("");
+    boolean consigne = true;
+    for (iline = 0; iline < 9; iline++) {
+      for (jcol = 1; jcol <= 9; jcol++) {
+        checkligne(jcol, grille, iline);
+        checkcol(jcol, grille, iline);
+        checkzone(jcol, grille, iline, jcol - 1);
+        if (verificateurZoneBol(jcol, grille, iline, jcol - 1) == false) {
+          consigne = false;
+        }
+      }
+    }
+    if (consigne) {
+      System.err.println("Bravo ! Vous avez réussi le solveur de sudoku");
+    }
+  }
+
+
+  /**
+  * Fonction qui affiche le tableau de la grille.
+  * @param grille le tableau
+  * @param titre le titre d'un affichage
+  */ 
+  public void affiche( int [][] grille, String titre) {
+    int ka = 0;
+    System.err.println("");
+    System.err.println("");
+    System.err.println(titre);
+    System.out.println();
+    for (int i = 0; i < 9; i++) {
+      int nrechercher = 0;
+      if (ka % 3 == 0) {
+        System.err.print("\n");
+      }
+      ka++;
+      for (int j = 0; j < 9; j++) {
+        nrechercher++;
+        System.err.print(" " + grille[i][j]);
+        if (nrechercher % 3 == 0) {
+          System.err.print(" ");
+        }
+        if (nrechercher == 9) {
+          System.err.println("");
+        }
+      }
+    }
+    System.err.print("--------------------");
+  }
+
+  /**
+  * LES FONCTIONS BOOLEENNES DE VERIFICATION
+  * Fonction booleene de verication de ligne.
+  * verifie si il n'y pas de repétition sur la ligne i pour le chiffre n
+  * @param grille le tableau
+  * @param nrechercher le nombre dont on verifie la répétition
+  * @param iline la ligne sur laquelle on verifie la repetition du nombre n
+  */
+  public boolean verificateurLigne(int nrechercher, int[][] grille, int iline) {
+    for (int j = 0; j < 9; j++) {
+      if (grille[iline][j] == nrechercher) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+  * Fonction booleene de verication de colonne.
+  * verifie si il n'a pas de doublon sur la colonne j pour le chiffre n  
+  * @param grille le tableau
+  * @param nrechercher le nombre dont on verifie la répétition
+  * @param jcol la colonne sur laquelle on verifie la repetition du nombre n
+  */
+  public boolean verificateurColonne(int nrechercher, int[][] grille, int jcol) {
+    for (int i = 0; i < 9; i++) {
+      if (grille[i][jcol] == nrechercher) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+  * Fonction booleene de verication de zone.
+  * verifie si il n' a pas de doublon dans la zone délimité par i et j pour le chiffre n.
+  * @param grille le tableau
+  * @param nrechercher le nombre dont on verifie la répétition
+  * @param iline la ligne sur laquelle on verifie la repetition du nombre n
+  * @param jcol la colonne sur laquelle on verifie la repetition du nombre n
+  */
+
+  public boolean verificateurZone(int nrechercher, int[][] grille, int iline, int jcol) {
+    int wline = iline - (iline % 3);
+    int zcol = jcol - (jcol % 3);
+    for (iline = wline; iline < wline + 3; iline++) {
+      for (jcol = zcol; jcol < zcol + 3; jcol++) {
+        if (grille[iline][jcol] == nrechercher) {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  /**
+  * Fonction booleene de verication de zone.
+  * verifie si il n' a pas de doublon dans la zone délimité par i et j pour le chiffre n.
+  * @param grille le tableau
+  * @param nrechercher le nombre dont on verifie la répétition
+  * @param iline la ligne sur laquelle on verifie la repetition du nombre n
+  * @param jcol la colonne sur laquelle on verifie la repetition du nombre n
+  */
+  public boolean verificateurZoneBol(int nrechercher, int[][] grille, int iline, int jcol) {
+    int wline = iline - (iline % 3);
+    int zcol = jcol - (jcol % 3);
+    int doublonZone = 0;
+    for (iline = wline; iline < wline + 3; iline++) {
+      for (jcol = zcol; jcol < zcol + 3; jcol++) {
+        if (grille[iline][jcol] == nrechercher) {
+          doublonZone++;
+        }
+      }
+    }
+    if (doublonZone > 1) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+
+  /**
+  * Fonction booleene de verication de la validation de la grille.
+  * si on est à la position 81 il renvoie vraie (on fini de remplir le sudoku)
+  * iline la ligne = partie entière de la division & 
+  * j la colonne = le reste de la division ( position [0 .....81]
+  * si il existe déjà un nombre à cette position on passe à la position suivante
+  * @param grille le tableau
+  * @param position la position
+  */
+  public boolean verificateurValide(int[][] grille, int position) {
+    if (position == 9 * 9) {
+      return true;
+    }
+    int iline = position / 9;
+    int jcol = position % 9;
+
+    if (grille[iline][jcol] != 0) {
+      return verificateurValide(grille, position + 1);
+    }
+
+    for (int k = 1; k <= 9; k++) {
+
+      // le nombre choisi (k) n'exite pas sur la colonne ni sur 
+      // la ligne ni dans la zone ont peut l'inserer à la position i j
+      if (verificateurLigne(k, grille, iline) 
+          && verificateurColonne(k, grille, jcol)
+          && verificateurZone(k, grille, iline, jcol)) {
+        grille[iline][jcol] = k;
+        if (verificateurValide(grille, position + 1)) {
+          return true;
+        }
+      }
+    }
+    // Tous les chiffres ont été testés, aucun n'est bon, 
+    // on réinitialise la case et on retourne false
+    grille[iline][jcol] = 0;
+    return false;
+  }
+
+
+  /**
+  * Fonction principale.
+  * @param args the command line arguments
+  **/
+  public static void main(String[] args) {       
+    Solversudokucheckstyle sudokucheckstyle = new Solversudokucheckstyle();
+    sudokucheckstyle.readGrille(""
+        + "C:/Users/Public/workspace/solveur_de_sudoku/"
+        + "src/solveur_de_sudoku/fichier_sudoku.txt");
+    sudokucheckstyle.grilleValide(sudokucheckstyle.grille, 0);
+    sudokucheckstyle.affiche(sudokucheckstyle.grille,"GRILLE FOURNIE FORMATEE");
+    //sudokucheckstyle.verificateurValide(sudokucheckstyle.grille, 0);
+  }
+}
